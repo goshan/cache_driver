@@ -10,7 +10,7 @@ module CacheDriver
 	end
 
 	def self.store_file?
-		@@config.store
+		@@config.store == :file
 	end
 
 	def self.store_redis?
