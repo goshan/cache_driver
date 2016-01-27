@@ -4,4 +4,8 @@ require "cache_driver/cache_record"
 require "cache_driver/cache_util"
 require "cache_driver/file_cache_util"
 
-CacheDriver.config.store = :file unless CacheDriver.config.store
+unless CacheDriver.configed?
+	CacheDriver.setup do |config|
+		config.store = :file
+	end
+end

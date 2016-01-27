@@ -3,12 +3,21 @@ module CacheDriver
 		attr_accessor :store
 	end
 
-	def self.config
-		@@config
+	@@config = Config.new
+
+	def self.configed?
+		@@config.store
+	end
+
+	def self.store_file?
+		@@config.store
+	end
+
+	def self.store_redis?
+		false
 	end
 
 	def self.setup
-		@@config.store = :file
 		yield @@config
 	end
 
