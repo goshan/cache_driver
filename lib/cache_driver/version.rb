@@ -1,0 +1,3 @@
+module CacheDriver
+  VERSION = "0.1.0"
+end
