@@ -4,6 +4,10 @@ module CacheDriver
 	end
 
 	def self.config
+		@@config
+	end
+
+	def self.setup
 		@@config.store = :file
 		yield @@config
 	end

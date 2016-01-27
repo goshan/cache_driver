@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["goshan"]
   spec.email         = ["goshan.hanqiu@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{A cache adapter for model accepting file or redis}
+  spec.description   = %q{make rails model act as ActiveRecord, but not save data into database but cache system, file or redis}
+  spec.homepage      = "https://github.com/goshan/cache_driver"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or

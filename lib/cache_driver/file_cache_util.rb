@@ -1,5 +1,5 @@
 class FileCacheUtil < CacheUtil
-	CACHE_DIR = Rails.root.join('tmp', 'cache')
+	CACHE_DIR = Pathname.new(File.expand_path "../../../tmp/cache", __FILE__)
 
 	class << self
 		def get_count(type)
@@ -26,6 +26,8 @@ class FileCacheUtil < CacheUtil
 		end
 
 		def write(type, data)
+			super type, data
+
 			dir = CACHE_DIR.join type_to_dir(type)
 			Dir.mkdir dir unless Dir.exist? dir
 
@@ -47,6 +49,8 @@ class FileCacheUtil < CacheUtil
 		end
 
 		def read(type, data_id)
+			super type, data_id
+
 			dir = CACHE_DIR.join type_to_dir(type)
 			Dir.mkdir dir unless Dir.exist? dir
 
@@ -64,6 +68,8 @@ class FileCacheUtil < CacheUtil
 		end
 
 		def read_all(type)
+			super type
+
 			dir = CACHE_DIR.join type_to_dir(type)
 			Dir.mkdir dir unless Dir.exist? dir
 			dir_scaner = Dir.new dir
@@ -86,6 +92,8 @@ class FileCacheUtil < CacheUtil
 		end
 
 		def delete(type, data_id)
+			super type, data_id
+
 			dir = CACHE_DIR.join type_to_dir(type)
 			return true unless Dir.exist? dir
 

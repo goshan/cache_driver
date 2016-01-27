@@ -3,22 +3,18 @@ class CacheUtil
 	class << self
 		def write(type, data)
 			puts "[CACHE] save #{type} to cache: #{data}"
-			FileCacheUtil.write type, data
 		end
 
 		def read(type, data_id)
 			puts "[CACHE] get #{type} from cache: #{data_id}"
-			FileCacheUtil.read type, data_id
 		end
 		
 		def read_all(type)
 			puts "[CACHE] get #{type} from cache: all"
-			FileCacheUtil.read_all type
 		end
 
 		def delete(type, data_id)
 			puts "[CACHE] delete #{type} from cache: #{data_id}"
-			FileCacheUtil.delete type, data_id
 		end
 
 		# type --> :room
