@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cache_driver (0.1.0)
+    cache_driver (0.2.0)
 
 GEM
   remote: https://rubygems.org/
