@@ -24,10 +24,16 @@ class CacheRecord
 	end
 
 	def to_cache
-		self.inspect
+		self.to_json
 	end
 
 	def self.from_cache(str)
-		self.new
+		json = JSON.parse str
+		ins = self.new
+		attr_key = ins.instance_variables.map{|var| var.to_s[1..-1]}]}
+		attr_key.each do |attr|
+			ins.send "#{attr_key}=", json[attr]
+		end
+		ins
 	end
 end
