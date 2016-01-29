@@ -58,6 +58,19 @@ cache_model.save!  # save this instance to cache
 cache_model.destroy  # delete this instance
 ```
 
+Also you can customize the data which you want to cache. 
+Just override the two methods below
+
+```ruby
+def to_cache
+  # do something you want to cache this model
+end
+
+def self.from_cache
+  # do something you want to get model from cache
+end
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/goshan/cache_driver.  
