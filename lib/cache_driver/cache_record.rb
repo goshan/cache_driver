@@ -30,9 +30,8 @@ class CacheRecord
 	def self.from_cache(str)
 		json = JSON.parse str
 		ins = self.new
-		attr_key = ins.instance_variables.map{|var| var.to_s[1..-1]}]}
-		attr_key.each do |attr|
-			ins.send "#{attr_key}=", json[attr]
+		json.each do |key, value|
+			ins.send "#{key}=", value
 		end
 		ins
 	end
