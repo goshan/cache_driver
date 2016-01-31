@@ -71,6 +71,26 @@ def self.from_cache
 end
 ```
 
+## Cache Inspect
+
+Sometimes you need know the data detail in cache, So you can use a rake task supported by us.
+
+	$ bundel exec rake cache:inspect
+
+Use the the command above to go to cache inspector and you will see the information below
+
+	CacheDriver > 
+
+After this you can use the following six commands to do something with the cache set by current project
+
+```sql
+CacheDriver > show models
+CacheDriver > desc <model>
+CacheDriver > select from <model> (where id=<id>)
+CacheDriver > insert to <model> values {'id' => 1, ...}
+CacheDriver > delete from <model> where id=<id>
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/goshan/cache_driver.  
