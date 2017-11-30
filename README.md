@@ -20,18 +20,17 @@ Or install it yourself as:
 
 ## Usage
 
-Your can create a config file to set storage type  
-
-    $ touch config/initializers/cache_driver.rb
+Add following code to environments/development.rb or environments/production.rb  
 
 ```ruby
-# CacheDriver Config
-# to make model save data to file or redis not database
-
 CacheDriver.setup do |config|
 	# set cache store type, :file or :redis
-	# default is :file
 	config.store = :file
+	config.file_dir = Rails.root.join('tmp', 'cache')
+	#config.store = :redis
+	#config.redis_host = "127.0.0.1"
+	#config.redis_port = 6379
+	#config.redis_namespace = "namespace"
 end
 ```
 
@@ -43,6 +42,10 @@ Just define model like below
 
 ```ruby
 class CacheModel < CacheRecord
+	# attribute name which is made as key to cache data
+	def self.key_attr
+		"attr_name"
+	end
 end
 ```
 
@@ -51,7 +54,7 @@ So you can use this model just like other ActiveRecord instance in controllers l
 ```ruby
 cache_models = CacheModel.find_all  # get all instance in cache  
 
-cache_model = CacheModel.find_by_id params[:id]  # get instance with id
+cache_model = CacheModel.find_by_key key  # get instance with key
 
 cache_model.save!  # save this instance to cache
 
@@ -63,11 +66,11 @@ Just override the two methods below
 
 ```ruby
 def to_cache
-  # do something you want to cache this model
+  # return a hashmap which you want to cache for this model
 end
 
-def self.from_cache
-  # do something you want to get model from cache
+def self.from_cache(obj)
+  # return this model instance from a hashmap obj include data you cached
 end
 ```
 
