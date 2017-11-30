@@ -4,16 +4,20 @@ class CacheRecord
     CacheRecord.cache_util.read_all CacheUtil.class_to_type(self)
   end
 
-  def self.find_by_key(key)
+  def self.find_by_key(key=0)
     CacheRecord.cache_util.read CacheUtil.class_to_type(self), key
   end
 
   def save!
-    CacheRecord.cache_util.write CacheUtil.class_to_type(self.class), self.send(self.class.key_attr), self
+    CacheRecord.cache_util.write CacheUtil.class_to_type(self.class), self.class.key_attr ? self.send(self.class.key_attr) : 0, self
   end
 
   def destroy
-    CacheRecord.cache_util.delete CacheUtil.class_to_type(self.class), self.send(self.class.key_attr)
+    CacheRecord.cache_util.delete CacheUtil.class_to_type(self.class), self.class.key_attr ? self.send(self.class.key_attr) : 0
+  end
+
+  def self.key_attr
+    nil
   end
 
   def to_cache
