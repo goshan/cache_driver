@@ -30,7 +30,7 @@ class RedisCacheUtil < CacheUtil
     def read_all(type)
       super type
 
-      r = self.redis
+      r = redis
       data = []
       r.keys("#{namespace}:#{type_to_dir(type)}#*").each do |key|
         content = r.get(key)
