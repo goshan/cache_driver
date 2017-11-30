@@ -2,7 +2,7 @@ class CacheUtil
 
   class << self
     def write(type, key, data)
-      puts "[CACHE] save #{type} ##{key} to cache: #{data}"
+      puts "[CACHE] save #{type} ##{key} to cache"
     end
 
     def read(type, key)

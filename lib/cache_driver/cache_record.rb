@@ -1,20 +1,19 @@
 class CacheRecord
-  @@cache_util = CacheDriver.store_file? ? FileCacheUtil : CacheDriver.store_redis? ? RedisCacheUtil : nil
 
   def self.find_all
-    @@cache_util.read_all CacheUtil.class_to_type(self)
+    CacheRecord.cache_util.read_all CacheUtil.class_to_type(self)
   end
 
   def self.find_by_key(key)
-    @@cache_util.read CacheUtil.class_to_type(self), id
+    CacheRecord.cache_util.read CacheUtil.class_to_type(self), key
   end
 
   def save!
-    @@cache_util.write CacheUtil.class_to_type(self.class), self
+    CacheRecord.cache_util.write CacheUtil.class_to_type(self.class), self.send(self.class.key_attr), self
   end
 
   def destroy
-    @@cache_util.delete CacheUtil.class_to_type(self.class), self.id
+    CacheRecord.cache_util.delete CacheUtil.class_to_type(self.class), self.send(self.class.key_attr)
   end
 
   def to_cache
@@ -27,5 +26,10 @@ class CacheRecord
       ins.send "#{key}=", value
     end
     ins
+  end
+
+  private
+  def self.cache_util
+    CacheDriver.store_file? ? FileCacheUtil : CacheDriver.store_redis? ? RedisCacheUtil : nil
   end
 end

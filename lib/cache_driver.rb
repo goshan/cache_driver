@@ -1,3 +1,5 @@
+require "redis"
+
 require "cache_driver/version"
 require "cache_driver/config"
 require "cache_driver/cache_record"

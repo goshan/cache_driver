@@ -1,25 +1,23 @@
 class RedisCacheUtil < CacheUtil
-  @@redis = Redis.new :host => CacheDriver.redis_host, :port => CacheDriver.redis_port
-  @@namespace = CacheDriver.redis_namespace
 
   class << self
     def write(type, key, data)
-      super type, data
+      super type, key, data
 
-      res = @@redis.set "#{@@namespace}:#{type_to_dir(type)}##{key}", "#{Time.now} --> #{data.to_cache}"
+      res = redis.set "#{namespace}:#{type_to_dir(type)}##{key}", "#{Time.now} --> #{data.to_cache.to_json}"
       res == "OK" ? key : nil
     end
 
     def read(type, key)
       super type, key
 
-      content = @@redis.get("#{@@namespace}:#{type_to_dir(type)}##{key}")
+      content = redis.get("#{namespace}:#{type_to_dir(type)}##{key}")
       unless content
         puts "cache #{type} ##{key} data miss"
         return nil
       end
 
-      data_str = file.read.split(" --> ")[1]
+      data_str = content.split(" --> ")[1]
       unless data_str
         puts "cache #{type} ##{key} data miss"
         return nil
@@ -32,15 +30,16 @@ class RedisCacheUtil < CacheUtil
     def read_all(type)
       super type
 
+      r = self.redis
       data = []
-      @@redis.keys("#{@@namespace}:#{type_to_dir(type)}#*").each do |key|
-        content = @@redis.get(key)
+      r.keys("#{namespace}:#{type_to_dir(type)}#*").each do |key|
+        content = r.get(key)
         unless content
           puts "cache #{key} data miss"
           next
         end
 
-        data_str = file.read.split(" --> ")[1]
+        data_str = content.split(" --> ")[1]
         unless data_str
           puts "cache #{key} data miss"
           next
@@ -56,8 +55,17 @@ class RedisCacheUtil < CacheUtil
     def delete(type, key)
       super type, key
 
-      res = @@redis.del("#{@@namespace}:#{type_to_dir(type)}##{key}")
+      res = redis.del("#{namespace}:#{type_to_dir(type)}##{key}")
       res == 1
+    end
+
+    private
+    def redis
+      Redis.new :host => CacheDriver.config.redis_host, :port => CacheDriver.config.redis_port
+    end
+
+    def namespace
+      CacheDriver.config.redis_namespace
     end
   end
 end

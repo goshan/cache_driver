@@ -1,15 +1,14 @@
 class FileCacheUtil < CacheUtil
-  @@file_dir = CacheDriver.file_dir
 
   class << self
     def write(type, key, data)
-      super type, data
+      super type, key, data
 
-      dir = @@file_dir.join type_to_dir(type)
+      dir = file_dir.join type_to_dir(type)
       Dir.mkdir dir unless Dir.exist? dir
 
       file = File.new dir.join("#{key}.cache"), 'w'
-      file.puts "#{Time.now} --> #{data.to_cache}"
+      file.puts "#{Time.now} --> #{data.to_cache.to_json}"
       file.close
 
       key
@@ -18,7 +17,7 @@ class FileCacheUtil < CacheUtil
     def read(type, key)
       super type, key
 
-      dir = @@file_dir.join type_to_dir(type)
+      dir = file_dir.join type_to_dir(type)
       Dir.mkdir dir unless Dir.exist? dir
 
       file_path = dir.join("#{key}.cache")
@@ -38,7 +37,7 @@ class FileCacheUtil < CacheUtil
     def read_all(type)
       super type
 
-      dir = @@file_dir.join type_to_dir(type)
+      dir = file_dir.join type_to_dir(type)
       Dir.mkdir dir unless Dir.exist? dir
       dir_scaner = Dir.new dir
 
@@ -63,13 +62,18 @@ class FileCacheUtil < CacheUtil
     def delete(type, key)
       super type, key
 
-      dir = @@file_dir.join type_to_dir(type)
+      dir = file_dir.join type_to_dir(type)
       return true unless Dir.exist? dir
 
       file_path = dir.join("#{key}.cache")
       return true unless File.exist? file_path
       File.delete file_path
       true
+    end
+
+    private
+    def file_dir
+      CacheDriver.config.file_dir
     end
   end
 end

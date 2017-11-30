@@ -3,6 +3,12 @@ module CacheDriver
     attr_accessor :store, :file_dir, :redis_host, :redis_port, :redis_namespace
   end
 
+  @@config = Config.new
+
+  def self.config
+    @@config
+  end
+
   def self.configed?
     @@config.store
   end
@@ -16,7 +22,6 @@ module CacheDriver
   end
 
   def self.setup
-    @@config = Config.new
     yield @@config
   end
 
