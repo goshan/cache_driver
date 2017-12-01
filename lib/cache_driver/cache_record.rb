@@ -21,7 +21,7 @@ class CacheRecord
   end
 
   def to_cache
-    self.to_json
+    self
   end
 
   def self.from_cache(obj)
