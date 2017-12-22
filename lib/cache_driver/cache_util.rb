@@ -26,7 +26,7 @@ class CacheUtil
 
     def class_to_type(clazz)
       cla_str = clazz.name
-      (cla_str[0].downcase + cla_str[1..-1]).to_sym
+      cla_str.gsub(/::/, '/').gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').tr("-", "_").downcase
     end
 
     def type_to_dir(type)
