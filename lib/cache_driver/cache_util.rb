@@ -21,7 +21,7 @@ class CacheUtil
     # class --> Room
     # dir --> 'rooms'
     def type_to_class(type)
-      type.to_s.capitalize.constantize
+      type.to_s.split('_').map(&:capitalize).join('').constantize
     end
 
     def class_to_type(clazz)
