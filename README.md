@@ -7,7 +7,7 @@ This gem makes rails model act as ActiveRecord, but not save data into database 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'cache_driver'
+gem 'cache_driver', '~> 0.3'
 ```
 
 And then execute:
@@ -54,23 +54,28 @@ So you can use this model just like other ActiveRecord instance in controllers l
 ```ruby
 cache_models = CacheModel.find_all  # get all instance in cache  
 
-cache_model = CacheModel.find_by_key key  # get instance with key
+cache_model = CacheModel.find_by_key key  # get instance which has key_attr
 
-cache_model.save!  # save this instance to cache
+cache_model = CacheModel.find_current  # get instance which has no key_attr
+
+cache_model.save  # save this instance to cache
 
 cache_model.destroy  # delete this instance
 ```
 
 Also you can customize the data which you want to cache. 
 Just override the two methods below
+By default `Fixnum`, `String`, `Array`, `Hash` will be parsed.
 
 ```ruby
 def to_cache
   # return a hashmap which you want to cache for this model
+  super
 end
 
 def self.from_cache(obj)
   # return this model instance from a hashmap obj include data you cached
+  super obj
 end
 ```
 
