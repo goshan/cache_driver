@@ -1,4 +1,6 @@
 require "redis"
+require 'tty-prompt'
+require 'colorize'
 
 require "cache_driver/version"
 require "cache_driver/config"

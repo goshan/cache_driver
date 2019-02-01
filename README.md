@@ -58,24 +58,30 @@ cache_model = CacheModel.find_by_key key  # get instance which has key_attr
 
 cache_model = CacheModel.find_current  # get instance which has no key_attr
 
+CacheModel.clear  # remove all cache
+
 cache_model.save  # save this instance to cache
 
 cache_model.destroy  # delete this instance
 ```
 
-Also you can customize the data which you want to cache. 
-Just override the two methods below
-By default `Fixnum`, `String`, `Array`, `Hash` will be parsed.
+By default, the attribute `Fixnum`, `String`, `Array`, `Hash` will be serialized to cache. But you should declare how to process other object such as Symbol or Class you creates
+So you can customize the serialization method to change data which you want to cache by overriding the two methods below
 
 ```ruby
 def to_cache
+  # super will process Fixnum, String, Array, Hash and return a new HashMap to use for serialization
+  # do other work with this hash to customize way of serialization
   # return a hashmap which you want to cache for this model
-  super
+  hash = super
 end
 
 def self.from_cache(obj)
-  # return this model instance from a hashmap obj include data you cached
-  super obj
+  # super will return a new instance for this class from a HashMap named `obj` which unserialized from cache, and the key of HashMap is String not Symbol.
+  # Only Fixnum, String, Array, Hash can be unserialized into HashMapexactly
+  # do other work with this new instance to customize way of unserialization
+  # return a instance of this Class which is unserialized from cache
+  ins = super obj
 end
 ```
 
@@ -83,20 +89,21 @@ end
 
 Sometimes you need know the data detail in cache, So you can use a rake task supported by us.
 
-  $ bundel exec rake cache:inspect
+	$ bundel exec rake cache:inspect
 
 Use the the command above to go to cache inspector and you will see the information below
 
-  CacheDriver > 
+	CacheDriver > 
 
 After this you can use the following six commands to do something with the cache set by current project
 
 ```sql
+CacheDriver > ?  # show all commands and descriptions
 CacheDriver > show models
-CacheDriver > desc <model>
-CacheDriver > select from <model> (where id=<id>)
-CacheDriver > insert to <model> values {'id' => 1, ...}
-CacheDriver > delete from <model> where id=<id>
+CacheDriver > show keys <model>
+CacheDriver > find <model> in <key>
+CacheDriver > save <model> to <key> withs <attr1>=<val1>,<attr2>=<val2>,...
+CacheDriver > delete <model> in <key>
 ```
 
 ## Contributing
