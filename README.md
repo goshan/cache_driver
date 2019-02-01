@@ -78,7 +78,7 @@ end
 
 def self.from_cache(obj)
   # super will return a new instance for this class from a HashMap named `obj` which unserialized from cache, and the key of HashMap is String not Symbol.
-  # Only Fixnum, String, Array, Hash can be unserialized into HashMapexactly
+  # Only Fixnum, String, Array, Hash can be unserialized into HashMap exactly
   # do other work with this new instance to customize way of unserialization
   # return a instance of this Class which is unserialized from cache
   ins = super obj
@@ -89,7 +89,7 @@ end
 
 Sometimes you need know the data detail in cache, So you can use a rake task supported by us.
 
-	$ bundel exec rake cache:inspect
+	$ bundle exec rake cache:inspect
 
 Use the the command above to go to cache inspector and you will see the information below
 
