@@ -61,7 +61,7 @@ class CacheDriverClient
 
   def save(model, key, assignments)
     rec = self.find model, key
-    rec = ['', {}]
+    rec = ['', {}] unless rec
     rec[0] = Time.now
     rec[1] = rec[1].merge(assignments).to_json
 
@@ -173,7 +173,7 @@ namespace :cache do
           prompt.say "find <model> in <key>                          | fetch data of model\n"
           prompt.say "save <model> to <key> withs <attr1>=<val1>,... | update data of model, create one if not existed\n"
           prompt.say "delete <model> in <key>                        | delete data of model\n"
-          prompt.say "clear <model>                                  | delete data of model\n"
+          prompt.say "clear <model>                                  | delete all data of model\n"
           prompt.say "------------------------------------------------------------------------------------------------\r"
         when :show_models
           prompt.say "Models:                                       \r".on_green.bold

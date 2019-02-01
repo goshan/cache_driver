@@ -104,6 +104,7 @@ CacheDriver > show keys <model>
 CacheDriver > find <model> in <key>
 CacheDriver > save <model> to <key> withs <attr1>=<val1>,<attr2>=<val2>,...
 CacheDriver > delete <model> in <key>
+CacheDriver > clear <model>
 ```
 
 ## Contributing
