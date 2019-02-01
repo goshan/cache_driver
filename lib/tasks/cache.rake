@@ -60,7 +60,24 @@ class CacheDriverClient
   end
 
   def save(model, key, assignments)
-    STDOUT.puts assignments.inspect
+    rec = self.find model, key
+    rec = ['', {}]
+    rec[0] = Time.now
+    rec[1] = rec[1].merge(assignments).to_json
+
+    model = "#{model}s"
+    if @cli.class == Pathname
+      dir = @cli.join(model)
+      Dir.mkdir dir unless Dir.exist? dir
+      file = File.new dir.join("#{key}.cache"), 'w'
+      file.puts rec.join(' --> ')
+      file.close
+      res = "OK"
+    elsif @cli.class == Redis
+      res = @cli.set "#{CacheDriver.config.redis_namespace}:#{model}##{key}", rec.join(' --> ')
+    end
+
+    res = "OK"
   end
 
   def delete(model, key)
@@ -80,23 +97,8 @@ class CacheDriverClient
   end
 
   def clear(model)
-    model = "#{model}s"
-    if @cli.class == Pathname
-      res = []
-      @cli.join(model).each_child do |file|
-        filename = file.basename.to_s
-        if filename =~ /\.cache/i
-          file.delete
-          res << [filename.gsub(/\.cache/, ''), 1]
-        else
-          res << [filename, 0]
-        end
-      end
-    elsif @cli.class == Redis
-      res = @cli.keys("#{CacheDriver.config.redis_namespace}:#{model}*").map do |key|
-        r = @cli.del key
-        [key.gsub("#{CacheDriver.config.redis_namespace}:", '').gsub(/.+#/, ''), r]
-      end
+    res = self.show_keys(model).map do |key|
+      [key, self.delete(model, key)]
     end
     Hash[res]
   end
@@ -143,11 +145,7 @@ namespace :cache do
               {action: :find, model: res[1].downcase, key: res[2]}
             elsif input =~ save
               res = input.match save
-              assignments = {}
-              res[2].split(',').each do |assign|
-                ele = assign.match /(\S+)\s?=\s?(\S+)/i
-                assignments[ele[1]] = ele[2] if ele
-              end
+              assignments = JSON.parse "{#{res[3].gsub("'", "\"").gsub(/([^,=\s]+)\s?=\s?/, '"\1"=').gsub('=', ':')}}"
               {action: :save, model: res[1].downcase, key: res[2], assignments: assignments}
             elsif input =~ delete
               res = input.match delete
@@ -168,7 +166,7 @@ namespace :cache do
           prompt.say "Bye!".green.bold
           exit
         when :help
-          prompt.say "Commands:                                     \r".on_green.bold
+          prompt.say "Commands:                                                                                       \r".on_green.bold
           prompt.say "'?'                                            | show all commands and descriptions\n"
           prompt.say "show models                                    | list all models\n"
           prompt.say "show keys <model>                              | list all keys of model in cache\n"
@@ -176,16 +174,19 @@ namespace :cache do
           prompt.say "save <model> to <key> withs <attr1>=<val1>,... | update data of model, create one if not existed\n"
           prompt.say "delete <model> in <key>                        | delete data of model\n"
           prompt.say "clear <model>                                  | delete data of model\n"
+          prompt.say "------------------------------------------------------------------------------------------------\r"
         when :show_models
           prompt.say "Models:                                       \r".on_green.bold
           client.show_models.each do |model|
             prompt.say model
           end
+          prompt.say "----------------------------------------------\r"
         when :show_keys
           prompt.say "Keys of #{cmd[:model]}:                                  \r".on_green.bold
           client.show_keys(cmd[:model]).each do |key|
             prompt.say key
           end
+          prompt.say "-----------------------------------------------\r"
         when :find
           prompt.say "Cache of #{cmd[:model]}##{cmd[:key]}:                               \r".on_green.bold
           res = client.find cmd[:model], cmd[:key]
@@ -197,10 +198,15 @@ namespace :cache do
           else
             prompt.error "no records found"
           end
+          prompt.say "-----------------------------------------------\r"
         when :save
-          client.save cmd[:model], cmd[:key], cmd[:assignments]
+          res = client.save cmd[:model], cmd[:key], cmd[:assignments]
+          if res
+            prompt.ok "save #{cmd[:model]}##{cmd[:key]} successed"
+          else
+            prompt.error "save #{cmd[:model]}##{cmd[:key]} failed"
+          end
         when :delete
-          prompt.say "Delete #{cmd[:model]}##{cmd[:key]}:                               \r".on_green.bold
           res = client.delete cmd[:model], cmd[:key]
           if res
             prompt.ok "delete #{cmd[:model]}##{cmd[:key]} successed"
@@ -208,14 +214,12 @@ namespace :cache do
             prompt.error "delete #{cmd[:model]}##{cmd[:key]} failed"
           end
         when :clear
-          prompt.say "Clear #{cmd[:model]}:                               \r".on_green.bold
           res = client.clear cmd[:model]
-          prompt.say "#{cmd[:model]}#(#{res.map { |k, v| v == 1 ? k : k.red}.join(',')}) was deleted"
+          prompt.say "#{cmd[:model]}#(#{res.map { |k, v| v ? k.green : k.red}.join(',')}) was deleted"
         else
           prompt.error "error: unknow command"
           next
         end
-        prompt.say "----------------------------------------------\r"
         prompt.say "\r"
       rescue => e
         prompt.error "error: #{e.message}"
