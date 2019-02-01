@@ -98,13 +98,13 @@ Use the the command above to go to cache inspector and you will see the informat
 After this you can use the following six commands to do something with the cache set by current project
 
 ```sql
-CacheDriver > ?  # show all commands and descriptions
-CacheDriver > show models
-CacheDriver > show keys <model>
-CacheDriver > find <model> in <key>
-CacheDriver > save <model> to <key> withs <attr1>=<val1>,<attr2>=<val2>,...
-CacheDriver > delete <model> in <key>
-CacheDriver > clear <model>
+CacheDriver > ?                                                                # show all commands and descriptions
+CacheDriver > show models                                                      # list all models
+CacheDriver > show keys <model>                                                # list all keys of model in cache
+CacheDriver > find <model> in <key>                                            # fetch data of model with key
+CacheDriver > save <model> to <key> withs <attr1>=<val1>,<attr2>=<val2>,...    # update data of model, create one if not existed
+CacheDriver > delete <model> in <key>                                          # delete data of model
+CacheDriver > clear <model>                                                    # delte all data of model
 ```
 
 ## Contributing
