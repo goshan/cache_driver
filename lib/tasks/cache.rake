@@ -18,7 +18,7 @@ class CacheDriverClient
       end
     elsif @cli.class == Redis
       models = @cli.keys.map do |key|
-        key.gsub("#{CacheDriver.config.redis_namespace}:", '').gsub(/#.+/, '')
+        key.gsub("#{CacheDriver.config.redis_namespace}:", '').gsub(/#.+/, '')[0..-2]
       end.uniq
     end
     models.sort

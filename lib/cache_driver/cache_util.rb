@@ -2,19 +2,35 @@ class CacheUtil
 
   class << self
     def write(type, key, data)
-      puts "[CACHE] save #{type} ##{key} to cache"
+      if CacheDriver.logger
+        CacheDriver.logger.debug "[CACHE] save #{type} ##{key} to cache"
+      else
+        puts "[CACHE] save #{type} ##{key} to cache"
+      end
     end
 
     def read(type, key)
-      puts "[CACHE] get #{type} ##{key} from cache"
+      if CacheDriver.logger
+        CacheDriver.logger.debug "[CACHE] get #{type} ##{key} from cache"
+      else
+        puts "[CACHE] get #{type} ##{key} from cache"
+      end
     end
     
     def read_all(type)
-      puts "[CACHE] get all #{type} from cache"
+      if CacheDriver.logger
+        CacheDriver.logger.debug "[CACHE] get all #{type} from cache"
+      else
+        puts "[CACHE] get all #{type} from cache"
+      end
     end
 
     def delete(type, key)
-      puts "[CACHE] delete #{type} ##{key} from cache"
+      if CacheDriver.logger
+        CacheDriver.logger.debug "[CACHE] delete #{type} ##{key} from cache"
+      else
+        puts "[CACHE] delete #{type} ##{key} from cache"
+      end
     end
 
     # type --> :room

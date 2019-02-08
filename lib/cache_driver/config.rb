@@ -1,6 +1,6 @@
 module CacheDriver
   class Config
-    attr_accessor :store, :file_dir, :redis_host, :redis_port, :redis_namespace
+    attr_accessor :store, :file_dir, :redis_host, :redis_port, :redis_namespace, :logger
   end
 
   @@config = Config.new
@@ -19,6 +19,10 @@ module CacheDriver
 
   def self.store_redis?
     @@config.store == :redis
+  end
+
+  def self.logger
+    @@config.logger
   end
 
   def self.setup

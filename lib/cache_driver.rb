@@ -12,6 +12,10 @@ require "cache_driver/redis_cache_util"
 
 module CacheDriver
   class Railtie < ::Rails::Railtie
+    initializer 'Rails logger' do
+      CacheDriver.config.logger = Rails.logger
+    end
+
     rake_tasks do 
       load 'tasks/cache.rake'
     end
